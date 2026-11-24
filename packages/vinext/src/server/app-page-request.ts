@@ -30,7 +30,7 @@ type GenerateStaticParamsModule = {
   generateStaticParams?: GenerateStaticParams | null;
 };
 
-type GenerateStaticParamsSource = {
+export type GenerateStaticParamsSource = {
   /**
    * Primary loader-tree sources execute top-down as one chain. Each source
    * receives the complete params object produced by the sources before it.
@@ -866,7 +866,8 @@ export async function resolveAppPageInterceptState<TRoute, TPage>(
 
   await loadAppInterceptPage(intercept);
   await loadAppInterceptNotFound(intercept);
-  if (intercept.rendersWholeInterceptingRoute) await loadAppInterceptOwnerDefault(intercept);
+  // The owner's `default` takes part in the interception's params check.
+  await loadAppInterceptOwnerDefault(intercept);
   if (
     intercept.__loadInterceptLayouts ||
     intercept.__loadInterceptLoadings ||
@@ -896,7 +897,7 @@ export async function resolveAppPageInterceptState<TRoute, TPage>(
  * app-page-element-builder.ts). Without a source that shares that tree, the
  * render is of the tree whole, with the slot owner's `default` as its children.
  */
-function markInterceptionSourceRender<TInterceptOpts, TPage>(
+export function markInterceptionSourceRender<TInterceptOpts, TPage>(
   opts: TInterceptOpts,
   intercept: AppPageInterceptMatch<TPage>,
 ): TInterceptOpts {
